@@ -9,6 +9,7 @@
 #include "SeparationGrkSolver.h"
 #include "SeparationGrkSpec.h"
 #include "SeparationGrkStrategy.h"
+#include "TestSet.h"
 #include "VarMgr.h"
 
 #include "Driver.h"
@@ -23,12 +24,12 @@ bool ValidateArguments(int argc, char* argv[],
 	std::string arg_options_regex = arg_options[0];
 
 	for (int i = 1; i < arg_options.size(); ++i) {
-		arg_options_regex += "+" + arg_options[i];
+		arg_options_regex += "|" + arg_options[i];
 	}
 
 	for (int i = 2; i < argc; ++i) {
 		std::string arg(argv[i]);
-		std::regex regex("^--(" + arg_options_regex + ")=([a-zA-Z0-9_.]*)$");
+		std::regex regex("^--(" + arg_options_regex + ")=([a-zA-Z0-9_./-]*)$");
 		std::smatch match;
 
 		std::regex_match(arg, match, regex);
@@ -44,18 +45,47 @@ bool ValidateArguments(int argc, char* argv[],
 	return true;
 }
 
+void RunTests(const std::vector<CUDD::BDD>& bdds, const std::string& test_file,
+              const std::shared_ptr<SGrk::VarMgr>& vars) {
+	try {
+		SGrk::TestSet test_set =
+			SGrk::TestSet::ReadFromFile(test_file, vars);
+
+		std::vector<std::vector<SGrk::TestResult>> test_results =
+			test_set.Run(bdds);
+
+		for (int i = 0; i < test_results.size(); ++i) {
+			std::cout << i << ":";
+
+			for (int j = 0; j < test_results[i].size(); ++j) {
+				if (test_results[i][j] == SGrk::TestResult::PASS) {
+					std::cout << " PASS";
+				} else {
+					std::cout << " FAIL";
+				}
+			}
+
+			std::cout << std::endl;
+		}
+	} catch (const std::runtime_error& e) {
+		std::cout << "Error reading " << test_file << ": " << e.what() << std::endl;
+	}
+}
+
 int main(int argc, char* argv[]) {
 	std::shared_ptr<CUDD::Cudd> mgr = std::make_shared<CUDD::Cudd>();
 	mgr->AutodynEnable();
 	std::shared_ptr<SGrk::VarMgr> vars = std::make_shared<SGrk::VarMgr>(mgr);
 
+	std::string test_option = "testfile";
 	std::string dot_option = "dotfile";
-	std::vector<std::string> arg_options = { dot_option };
+	std::vector<std::string> arg_options = { test_option, dot_option };
 	std::unordered_map<std::string, std::string> arg_map;
 
 	if (!ValidateArguments(argc, argv, arg_options, arg_map)) {
 		std::cout << "Usage: "
 		          << std::string(argv[0]) << " <spec-file> "
+		          << "[--" << test_option << "=<test-set-file>] "
 		          << "[--" << dot_option << "=<output-dot-file>]"
 		          << std::endl;
 
@@ -74,16 +104,23 @@ int main(int argc, char* argv[]) {
 	if (strategy) {
 		std::cout << "Realizable" << std::endl;
 
-		auto dot_file = arg_map.find(dot_option);
-		
-		if (dot_file != arg_map.end()) {
+		if (!arg_map.empty()) {
 			std::vector<CUDD::BDD> bdds = {
 				strategy->WinningStates(),
 				strategy->CycleCoveringStates(),
 				strategy->ReachingMoves()
 			};
 
-			vars->DumpDot(bdds, { "FG(CC)", "CC", "T" }, dot_file->second);
+			auto test_file = arg_map.find(test_option);
+			auto dot_file = arg_map.find(dot_option);
+
+			if (test_file != arg_map.end()) {
+				RunTests(bdds, test_file->second, vars);
+			}
+			
+			if (dot_file != arg_map.end()) {
+				vars->DumpDot(bdds, { "FG(CC)", "CC", "T" }, dot_file->second);
+			}
 		}
 	} else {
 		std::cout << "Unrealizable" << std::endl;
