@@ -7,7 +7,7 @@ ODIR=.
 BISON=bison
 FLEX=flex
 CC=g++
-CFLAGS=-I$(IDIR) -L$(LDIR) --std=c++17 -g
+CFLAGS=-I$(IDIR) -L$(LDIR) --std=c++17
 
 LIBS=-lcudd
 
