@@ -28,8 +28,7 @@ std::optional<SeparationGrkStrategy> SeparationGrkSolver::Run() const {
 
 	CycleCover cycle_cover(mgr_, vars_, spec_, connectivity);
 
-	CUDD::BDD accepting_states = (connectivity.ValidStates() &
-	                              cycle_cover.CoversAllCycles());
+	CUDD::BDD accepting_states = cycle_cover.CoveredRegion();
 
 	WeakFGGame game(connectivity, initial_assumptions, initial_guarantees,
 	                safety_assumptions, safety_guarantees, accepting_states);
@@ -38,24 +37,24 @@ std::optional<SeparationGrkStrategy> SeparationGrkSolver::Run() const {
 
 	PermissiveStrategy weak_fg_strategy = solver.Run();
 
-	// Forall x . Init_env(x) -> Exists y . Init_sys(y) & Win(x, y)
-	bool is_realizable =
-		vars_->Forall(vars_->UnprimedInputs(),
-		              !initial_assumptions |
-		              vars_->Exists(vars_->UnprimedOutputs(),
-		                            initial_guarantees &
-		                            weak_fg_strategy.WinningStates())).IsOne();
+	CUDD::BDD initial_moves =
+		vars_->UnprimedToPrimed(initial_guarantees &
+		                        weak_fg_strategy.WinningStates());
+	MemorylessStrategy initial_strategy =
+		MemorylessStrategy::Determinize(mgr_, vars_, initial_moves);
+
+	// Check if every input that satisfies the initial assumptions is in the
+	// realizable region
+	bool is_realizable = (!vars_->UnprimedToPrimed(initial_assumptions) |
+	                      initial_strategy.RealizableRegion()).IsOne();
 
 	if (!is_realizable) {
 		return std::nullopt;
 	} else {
-		CUDD::BDD winning_states = weak_fg_strategy.WinningStates();
-		CUDD::BDD cycle_covering_states = accepting_states;
-		CUDD::BDD reaching_moves =
-			!cycle_covering_states & weak_fg_strategy.WinningMoves();
-		
-		return SeparationGrkStrategy(mgr_, vars_, winning_states, reaching_moves,
-		                             cycle_covering_states);
+		return SeparationGrkStrategy(mgr_, vars_,
+		                             std::move(initial_strategy),
+		                             std::move(cycle_cover),
+		                             std::move(weak_fg_strategy));
 	}
 }
 
