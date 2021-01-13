@@ -1,0 +1,127 @@
+(("in:room0" & !"in:room1" & !"in:room2" & !"in:room3" & !"in:room4" & !"in:room5" & !"in:clean0" & !"in:clean1" & !"in:clean2" & !"in:clean3" & !"in:clean4" & !"in:clean5" & !"in:done") &
+ G (("in:room0" | "in:room1" | "in:room2" | "in:room3" | "in:room4" | "in:room5") &
+   (X "in:room0" | X "in:room1" | X "in:room2" | X "in:room3" | X "in:room4" | X "in:room5") &
+   ("in:room1" -> !"in:room0") &
+   ("in:room2" -> !"in:room0") &
+   ("in:room2" -> !"in:room1") &
+   ("in:room3" -> !"in:room0") &
+   ("in:room3" -> !"in:room1") &
+   ("in:room3" -> !"in:room2") &
+   ("in:room4" -> !"in:room0") &
+   ("in:room4" -> !"in:room1") &
+   ("in:room4" -> !"in:room2") &
+   ("in:room4" -> !"in:room3") &
+   ("in:room5" -> !"in:room0") &
+   ("in:room5" -> !"in:room1") &
+   ("in:room5" -> !"in:room2") &
+   ("in:room5" -> !"in:room3") &
+   ("in:room5" -> !"in:room4") &
+   (X "in:room1" -> !X "in:room0") &
+   (X "in:room2" -> !X "in:room0") &
+   (X "in:room2" -> !X "in:room1") &
+   (X "in:room3" -> !X "in:room0") &
+   (X "in:room3" -> !X "in:room1") &
+   (X "in:room3" -> !X "in:room2") &
+   (X "in:room4" -> !X "in:room0") &
+   (X "in:room4" -> !X "in:room1") &
+   (X "in:room4" -> !X "in:room2") &
+   (X "in:room4" -> !X "in:room3") &
+   (X "in:room5" -> !X "in:room0") &
+   (X "in:room5" -> !X "in:room1") &
+   (X "in:room5" -> !X "in:room2") &
+   (X "in:room5" -> !X "in:room3") &
+   (X "in:room5" -> !X "in:room4") &
+   ("in:room0" -> (X "in:room0" | X "in:room1")) &
+   ("in:room1" -> (X "in:room1" | X "in:room2")) &
+   ("in:room2" -> (X "in:room2" | X "in:room3")) &
+   ("in:room3" -> (X "in:room3" | X "in:room4")) &
+   ("in:room4" -> (X "in:room4" | X "in:room5")) &
+   ("in:room5" -> X "in:room5") &
+   ((!"in:clean0" & X "in:clean0") -> ("in:room0" & X "in:room0")) &
+   ((!"in:clean1" & X "in:clean1") -> ("in:room1" & X "in:room1")) &
+   ((!"in:clean2" & X "in:clean2") -> ("in:room2" & X "in:room2")) &
+   ((!"in:clean3" & X "in:clean3") -> ("in:room3" & X "in:room3")) &
+   ((!"in:clean4" & X "in:clean4") -> ("in:room4" & X "in:room4")) &
+   ((!"in:clean5" & X "in:clean5") -> ("in:room5" & X "in:room5")) &
+   ("in:clean0" -> X "in:clean0") &
+   ("in:clean1" -> X "in:clean1") &
+   ("in:clean2" -> X "in:clean2") &
+   ("in:clean3" -> X "in:clean3") &
+   ("in:clean4" -> X "in:clean4") &
+   ("in:clean5" -> X "in:clean5") &
+   ("in:done" -> X "in:done") &
+   (X "in:done" -> (X "in:room0" <-> "in:room0")) &
+   (X "in:done" -> (X "in:room1" <-> "in:room1")) &
+   (X "in:done" -> (X "in:room2" <-> "in:room2")) &
+   (X "in:done" -> (X "in:room3" <-> "in:room3")) &
+   (X "in:done" -> (X "in:room4" <-> "in:room4")) &
+   (X "in:done" -> (X "in:room5" <-> "in:room5")) &
+   (X "in:done" -> (X "in:clean0" <-> "in:clean0")) &
+   (X "in:done" -> (X "in:clean1" <-> "in:clean1")) &
+   (X "in:done" -> (X "in:clean2" <-> "in:clean2")) &
+   (X "in:done" -> (X "in:clean3" <-> "in:clean3")) &
+   (X "in:done" -> (X "in:clean4" <-> "in:clean4")) &
+   (X "in:done" -> (X "in:clean5" <-> "in:clean5")))) ->
+(("out:room0" & !"out:room1" & !"out:room2" & !"out:room3" & !"out:room4" & !"out:room5" & !"out:clean0" & !"out:clean1" & !"out:clean2" & !"out:clean3" & !"out:clean4" & !"out:clean5") &
+ G (("out:room0" | "out:room1" | "out:room2" | "out:room3" | "out:room4" | "out:room5") &
+    (X "out:room0" | X "out:room1" | X "out:room2" | X "out:room3" | X "out:room4" | X "out:room5") &
+    ("out:room1" -> !"out:room0") &
+    ("out:room2" -> !"out:room0") &
+    ("out:room2" -> !"out:room1") &
+    ("out:room3" -> !"out:room0") &
+    ("out:room3" -> !"out:room1") &
+    ("out:room3" -> !"out:room2") &
+    ("out:room4" -> !"out:room0") &
+    ("out:room4" -> !"out:room1") &
+    ("out:room4" -> !"out:room2") &
+    ("out:room4" -> !"out:room3") &
+    ("out:room5" -> !"out:room0") &
+    ("out:room5" -> !"out:room1") &
+    ("out:room5" -> !"out:room2") &
+    ("out:room5" -> !"out:room3") &
+    ("out:room5" -> !"out:room4") &
+    (X "out:room1" -> !X "out:room0") &
+    (X "out:room2" -> !X "out:room0") &
+    (X "out:room2" -> !X "out:room1") &
+    (X "out:room3" -> !X "out:room0") &
+    (X "out:room3" -> !X "out:room1") &
+    (X "out:room3" -> !X "out:room2") &
+    (X "out:room4" -> !X "out:room0") &
+    (X "out:room4" -> !X "out:room1") &
+    (X "out:room4" -> !X "out:room2") &
+    (X "out:room4" -> !X "out:room3") &
+    (X "out:room5" -> !X "out:room0") &
+    (X "out:room5" -> !X "out:room1") &
+    (X "out:room5" -> !X "out:room2") &
+    (X "out:room5" -> !X "out:room3") &
+    (X "out:room5" -> !X "out:room4") &
+    ("out:room0" -> (X "out:room0" | X "out:room1")) &
+    ("out:room1" -> (X "out:room1" | X "out:room2")) &
+    ("out:room2" -> (X "out:room2" | X "out:room3")) &
+    ("out:room3" -> (X "out:room3" | X "out:room4")) &
+    ("out:room4" -> (X "out:room4" | X "out:room5")) &
+    ("out:room5" -> X "out:room5") &
+    ((!"out:clean0" & X "out:clean0") -> ("out:room0" & X "out:room0")) &
+    ((!"out:clean1" & X "out:clean1") -> ("out:room1" & X "out:room1")) &
+    ((!"out:clean2" & X "out:clean2") -> ("out:room2" & X "out:room2")) &
+    ((!"out:clean3" & X "out:clean3") -> ("out:room3" & X "out:room3")) &
+    ((!"out:clean4" & X "out:clean4") -> ("out:room4" & X "out:room4")) &
+    ((!"out:clean5" & X "out:clean5") -> ("out:room5" & X "out:room5")) &
+    ("out:clean0" -> X "out:clean0") &
+    ("out:clean1" -> X "out:clean1") &
+    ("out:clean2" -> X "out:clean2") &
+    ("out:clean3" -> X "out:clean3") &
+    ("out:clean4" -> X "out:clean4") &
+    ("out:clean5" -> X "out:clean5")) &
+ ((GF "in:done" & GF !"in:clean0") -> (GF "out:clean0")) &
+ ((GF "in:done" & GF !"in:clean1") -> (GF "out:clean1")) &
+ ((GF "in:done" & GF !"in:clean2") -> (GF "out:clean2")) &
+ ((GF "in:done" & GF !"in:clean3") -> (GF "out:clean3")) &
+ ((GF "in:done" & GF !"in:clean4") -> (GF "out:clean4")) &
+ ((GF "in:done" & GF !"in:clean5") -> (GF "out:clean5")) &
+ ((GF "in:done" & GF "in:clean0") -> (GF !"out:clean0")) &
+ ((GF "in:done" & GF "in:clean1") -> (GF !"out:clean1")) &
+ ((GF "in:done" & GF "in:clean2") -> (GF !"out:clean2")) &
+ ((GF "in:done" & GF "in:clean3") -> (GF !"out:clean3")) &
+ ((GF "in:done" & GF "in:clean4") -> (GF !"out:clean4")) &
+ ((GF "in:done" & GF "in:clean5") -> (GF !"out:clean5")))
