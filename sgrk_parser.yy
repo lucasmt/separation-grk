@@ -71,9 +71,9 @@ class Driver;
 %%
 
 %start sgrk_formula;
-sgrk_formula: in_state AND out_state AND in_trans AND out_trans AND justice_implications
+sgrk_formula: LEFT in_state AND in_trans RIGHT IFTHEN LEFT out_state AND out_trans AND justice_implications RIGHT
 {
-	driver.spec = SGrk::SeparationGrkSpec($1, $3, $5, $7, std::move($9));
+	driver.spec = SGrk::SeparationGrkSpec($2, $8, $4, $10, std::move($12));
 };
 
 prop: INPROP
@@ -105,7 +105,8 @@ state: FALSE { $$ = driver.mgr->bddZero(); }
 | TRUE { $$ = driver.mgr->bddOne(); }
 | prop { $$ = $1->operator()(); }
 | NEXT prop {	$$ = $2->Prime(); }
-| LEFT state RIGHT { $$ = $2; } | NOT state {	$$ = !$2; }
+| LEFT state RIGHT { $$ = $2; }
+| NOT state {	$$ = !$2; }
 | LEFT state and_states RIGHT {	$$ = $2 & $3; }
 | LEFT state or_states RIGHT { $$ = $2 | $3; }
 | LEFT state IFTHEN state RIGHT {	$$ = !$2 | $4; }
@@ -136,9 +137,9 @@ justice_implications: justice_implication
 	$$ = std::move(implications);
 };
 
-justice_implication: LEFT in_justices IFTHEN out_justices RIGHT
+justice_implication: LEFT LEFT in_justices RIGHT IFTHEN LEFT out_justices RIGHT RIGHT
 {
-	$$ = SGrk::SeparationGrkImplication($2, $4);
+	$$ = SGrk::SeparationGrkImplication($3, $7);
 };
 
 in_justices: justices { $$ = std::move($1); };
