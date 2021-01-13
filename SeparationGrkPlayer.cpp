@@ -26,8 +26,17 @@ bool SeparationGrkPlayer::AskForInput(std::istream& in,
 	std::size_t input_size = vars_->InputVarCount();
 	
 	while (true) {
-		std::cout << "Please enter inputs (" << vars_->ToString(input_vars)
-		          << "):" << std::endl;
+		std::cout << "Please enter inputs (";
+
+		for (int i = 0; i < input_indices.size(); ++i) {
+			if (i > 0) std::cout << ", ";
+
+			CUDD::BDD var = vars_->PrimedToUnprimed(mgr_->bddVar(input_indices[i]));
+
+			std::cout << vars_->ToString(var);
+		}
+
+		std::cout << "):" << std::endl;
 
 		std::string input_string;
 		in >> input_string;
