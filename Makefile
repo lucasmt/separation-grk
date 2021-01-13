@@ -14,7 +14,7 @@ LIBS=-lcudd
 _DEPS=
 DEPS=$(patsubst %,$(IDIR)/%,$(_DEPS))
 
-_OBJ=sgrk_parser.o sgrk_scanner.o CycleCover.o Driver.o Main.o PermissiveStrategy.o SeparationGrkSolver.o SeparationGrkStrategy.o SpaceConnectivity.o TestSet.o VarMgr.o WeakFGGame.o WeakFGGameSolver.o
+_OBJ=sgrk_parser.o sgrk_scanner.o CycleCover.o CycleStrategy.o Driver.o Main.o MemorylessStrategy.o PermissiveStrategy.o SeparationGrkPlayer.o SeparationGrkSolver.o SeparationGrkStrategy.o SpaceConnectivity.o TestSet.o Util.o VarMgr.o WeakFGGame.o WeakFGGameSolver.o
 OBJ=$(patsubst %,$(ODIR)/%,$(_OBJ))
 
 %.cpp %.hpp: %.yy
