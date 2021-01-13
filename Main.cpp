@@ -1,3 +1,4 @@
+#include <fstream>
 #include <iostream>
 #include <memory>
 #include <regex>
@@ -6,6 +7,7 @@
 
 #include "cuddObj.hh"
 
+#include "SeparationGrkPlayer.h"
 #include "SeparationGrkSolver.h"
 #include "SeparationGrkSpec.h"
 #include "SeparationGrkStrategy.h"
@@ -72,21 +74,40 @@ void RunTests(const std::vector<CUDD::BDD>& bdds, const std::string& test_file,
 	}
 }
 
+void PlayGame(const SGrk::SeparationGrkSpec& spec,
+              const SGrk::SeparationGrkStrategy& strategy,
+              const std::string& filename,
+              const std::shared_ptr<CUDD::Cudd> mgr,
+              const std::shared_ptr<SGrk::VarMgr> vars) {
+	SGrk::SeparationGrkPlayer player(mgr, vars, spec, strategy);
+
+	if (filename == "stdin") {
+		player.Play(std::cin);
+	} else {
+		std::ifstream in(filename);
+		player.Play(in);
+	}
+}
+
 int main(int argc, char* argv[]) {
 	std::shared_ptr<CUDD::Cudd> mgr = std::make_shared<CUDD::Cudd>();
 	mgr->AutodynEnable();
 	std::shared_ptr<SGrk::VarMgr> vars = std::make_shared<SGrk::VarMgr>(mgr);
 
-	std::string test_option = "testfile";
-	std::string dot_option = "dotfile";
-	std::vector<std::string> arg_options = { test_option, dot_option };
+	std::string test_option = "test";
+	std::string dot_option = "dumpdot";
+	std::string play_option = "play";
+	std::vector<std::string> arg_options = { test_option,
+	                                         dot_option,
+	                                         play_option };
 	std::unordered_map<std::string, std::string> arg_map;
 
 	if (!ValidateArguments(argc, argv, arg_options, arg_map)) {
 		std::cout << "Usage: "
 		          << std::string(argv[0]) << " <spec-file> "
 		          << "[--" << test_option << "=<test-set-file>] "
-		          << "[--" << dot_option << "=<output-dot-file>]"
+		          << "[--" << play_option << "=<input-play-file>] "
+		          << "[--" << dot_option << "=<output-dot-file>] "
 		          << std::endl;
 
 		return 0;
@@ -112,6 +133,7 @@ int main(int argc, char* argv[]) {
 			};
 
 			auto test_file = arg_map.find(test_option);
+			auto play_file = arg_map.find(play_option);
 			auto dot_file = arg_map.find(dot_option);
 
 			if (test_file != arg_map.end()) {
@@ -120,6 +142,10 @@ int main(int argc, char* argv[]) {
 			
 			if (dot_file != arg_map.end()) {
 				vars->DumpDot(bdds, { "FG(CC)", "CC", "T" }, dot_file->second);
+			}
+
+			if (play_file != arg_map.end()) {
+				PlayGame(spec, *strategy, play_file->second, mgr, vars);
 			}
 		}
 	} else {
