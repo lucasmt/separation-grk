@@ -6,7 +6,8 @@
 
 #include "cuddObj.hh"
 
-#include "PermissiveStrategy.h"
+#include "CycleStrategy.h"
+#include "MemorylessStrategy.h"
 #include "SeparationGrkSpec.h"
 #include "SpaceConnectivity.h"
 #include "VarMgr.h"
@@ -16,43 +17,36 @@ namespace SGrk {
 class CycleCover {
 	std::shared_ptr<CUDD::Cudd> mgr_;
 	std::shared_ptr<VarMgr> vars_;
+	CUDD::BDD covered_region_;
+	CycleStrategy cycle_strategy_;
 
-	std::size_t implication_count_;
-	std::vector<std::size_t> assumption_count_;
-	std::vector<std::size_t> guarantee_count_;
-	std::vector<std::vector<CUDD::BDD>> can_satisfy_assumption_;
-	std::vector<std::vector<CUDD::BDD>> can_satisfy_guarantee_;
-	std::vector<CUDD::BDD> can_satisfy_assumptions_;
-	std::vector<CUDD::BDD> can_satisfy_guarantees_;
-	std::vector<CUDD::BDD> covers_cycles_;
-	CUDD::BDD covers_all_cycles_;
-	std::vector<std::vector<std::size_t>> guarantee_index_;
-	std::vector<PermissiveStrategy> cycle_strategy_;
-	std::vector<CUDD::ADD> cycle_continuation_;
+	MemorylessStrategy ComputeReachabilityStrategy(
+	  const CUDD::BDD& transition_relation,
+	  const CUDD::BDD& bipath_relation,
+	  const CUDD::BDD& goal) const;
+
+	PathStrategy ComputePathStrategy(
+    const CUDD::BDD& transition_relation,
+    const CUDD::BDD& bipath_relation,
+    const std::vector<CUDD::BDD>& goals) const;
+
+	CycleStrategy ComputeCycleStrategy(
+    const SeparationGrkSpec& spec,
+    const SpaceConnectivity& connectivity) const;
 
 	CUDD::BDD HasCycle(const CUDD::BDD& connected, const CUDD::BDD& prop) const;
-	void ComputeCounts(const SeparationGrkSpec& spec);
-	void ComputeCycles(const SeparationGrkSpec& spec,
-	                   const SpaceConnectivity& connectivity);
-	void ComputeCoverage(const SeparationGrkSpec& spec,
-	                     const SpaceConnectivity& connectivity);
-	void ComputeIndices(const SeparationGrkSpec& spec);
-	void ComputeStrategy(const SeparationGrkSpec& spec,
-	                     const SpaceConnectivity& connectivity);
-	void ComputeContinuation(const SeparationGrkSpec& spec);
+
+	CUDD::BDD ComputeCoveredRegion(const SeparationGrkSpec& spec,
+	                               const SpaceConnectivity& connectivity) const;
 	
  public:
+
 	CycleCover(std::shared_ptr<CUDD::Cudd> mgr, std::shared_ptr<VarMgr> vars,
 	           const SeparationGrkSpec& spec,
 	           const SpaceConnectivity& connectivity);
 
-	CUDD::BDD CoversAllCycles() const;
-
-	const std::vector<CUDD::BDD>& AssumptionComponents() const;
-	const std::vector<CUDD::BDD>& GuaranteeComponents() const;
-	const std::vector<CUDD::BDD>& CycleCoverage() const;
-	const std::vector<PermissiveStrategy>& CycleStrategy() const;
-	const std::vector<CUDD::ADD>& CycleContinuation() const;
+	CUDD::BDD CoveredRegion() const;
+	const CycleStrategy& Strategy() const;
 };
 
 }
