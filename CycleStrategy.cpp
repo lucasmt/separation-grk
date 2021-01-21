@@ -88,9 +88,6 @@ void CycleStrategy::Merge(const PathStrategy& path_strategy) {
 
 int CycleStrategy::InitialIndex(std::vector<int>& transition_vector)
 	  const {
-	std::vector<CUDD::ADD> adds = {continuations_.back()};
-	vars_->DumpDot(adds, {"C"}, "initial_continuation.dot");
-	
 	return Util::EvalAdd(continuations_.back(), transition_vector);
 }
 
