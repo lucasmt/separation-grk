@@ -43,7 +43,7 @@ TestSet TestSet::ReadFromFile(const std::string& filename,
 
 		std::string variable_name = line.substr(0, pos);
 
-		std::optional<Var> variable = vars->FindVar("\"" + variable_name + "\"");
+		std::optional<Var> variable = vars->FindVar(variable_name);
 
 		if (!variable) {
 			throw std::runtime_error("Invalid variable name: " + variable_name);
