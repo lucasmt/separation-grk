@@ -109,12 +109,20 @@ CUDD::BDD CycleCover::HasCycle(const CUDD::BDD& connected,
 CUDD::BDD CycleCover::ComputeCoveredRegion(
     const SeparationGrkSpec& spec,
     const SpaceConnectivity& connectivity) const {
+	CUDD::BDD valid_states =
+		connectivity.ValidStates();
+	CUDD::BDD bipath_relation =
+		connectivity.BipathRelation();
 	CUDD::BDD environment_bipath_relation =
 		connectivity.EnvironmentBipathRelation();
 	CUDD::BDD system_bipath_relation =
 		connectivity.SystemBipathRelation();
 
-	CUDD::BDD covered_region = connectivity.ValidStates();
+	CUDD::BDD cycle_states = valid_states & vars_->Exists(vars_->PrimedVars(),
+	                                                      bipath_relation &
+	                                                      vars_->Reflexive());
+
+	CUDD::BDD covered_region = cycle_states;
 
 	for (const auto& implication : spec.JusticeImplications()) {
 		CUDD::BDD can_satisfy_assumptions = mgr_->bddOne();
