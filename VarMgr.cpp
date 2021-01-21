@@ -33,7 +33,8 @@ VarMgr::VarMgr(std::shared_ptr<CUDD::Cudd> mgr)
 	, primed_vars_(mgr_->bddOne())
 	, temp_input_vars_(mgr_->bddOne())
 	, temp_output_vars_(mgr_->bddOne())
-	, temp_vars_(mgr_->bddOne()) {}
+	, temp_vars_(mgr_->bddOne())
+	, reflexive_(mgr_->bddOne()) {}
 
 Var VarMgr::NewVar(VarType var_type, const std::string& name) {
 	CUDD::BDD unprimed = mgr_->bddVar();
@@ -82,6 +83,8 @@ Var VarMgr::NewVar(VarType var_type, const std::string& name) {
 	var_labels_.push_back(name);
 	var_labels_.push_back(name + "'");
 	var_labels_.push_back(name + "*");
+
+	reflexive_ &= unprimed.Xnor(primed);
 	
 	return var;
 }
@@ -216,6 +219,10 @@ std::string VarMgr::ToString(const CUDD::BDD& bdd) const {
 	return s;
 }
 
+CUDD::BDD VarMgr::Reflexive() const {
+	return reflexive_;
+}
+
 void VarMgr::DumpDot(const std::vector<CUDD::BDD>& bdds,
                      const std::vector<std::string>& labels,
                      const std::string& filename) const {
@@ -225,7 +232,7 @@ void VarMgr::DumpDot(const std::vector<CUDD::BDD>& bdds,
 		adds.push_back(bdd.Add());
 	}
 
-	return DumpDot(adds, labels, filename);
+	DumpDot(adds, labels, filename);
 }
 	
 void VarMgr::DumpDot(const std::vector<CUDD::ADD>& bdds,

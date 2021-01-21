@@ -54,6 +54,8 @@ class VarMgr {
 	std::vector<CUDD::BDD> unprimed_to_temp_;
 	std::vector<std::string> var_labels_;
 
+	CUDD::BDD reflexive_;
+
  public:
 	
 	VarMgr(std::shared_ptr<CUDD::Cudd> mgr);
@@ -89,6 +91,8 @@ class VarMgr {
 	std::vector<int> ZeroedTransitionVector() const;
 
 	std::string ToString(const CUDD::BDD& bdd) const;
+
+	CUDD::BDD Reflexive() const;
 
 	void DumpDot(const std::vector<CUDD::BDD>& bdds,
 	             const std::vector<std::string>& labels,
