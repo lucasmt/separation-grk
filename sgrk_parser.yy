@@ -39,7 +39,7 @@ class Driver;
 	OR				"|"
 	IFTHEN		"->"
 	IFF				"<->"
-	XOR				"</>"
+	XOR				"^"
 	NEXT			"X"
 	ALWAYS		"G"
 	INFINITE	"GF"
@@ -78,21 +78,25 @@ sgrk_formula: LEFT in_state AND in_trans RIGHT IFTHEN LEFT out_state AND out_tra
 
 prop: INPROP
 {
-	std::optional<SGrk::Var> maybe_var = driver.vars->FindVar($1);
+	std::string var_name = $1.substr(1, $1.size() - 2);
+
+	std::optional<SGrk::Var> maybe_var = driver.vars->FindVar(var_name);
 
 	SGrk::Var var = maybe_var ?
 			*maybe_var :
-			driver.vars->NewVar(SGrk::VarType::INPUT, $1);
+			driver.vars->NewVar(SGrk::VarType::INPUT, var_name);
 
 	$$ = std::move(var);
 }
 | OUTPROP
 {
-	std::optional<SGrk::Var> maybe_var = driver.vars->FindVar($1);
+	std::string var_name = $1.substr(1, $1.size() - 2);
+
+	std::optional<SGrk::Var> maybe_var = driver.vars->FindVar(var_name);
 
 	SGrk::Var var = maybe_var ?
 			*maybe_var :
-			driver.vars->NewVar(SGrk::VarType::OUTPUT, $1);
+			driver.vars->NewVar(SGrk::VarType::OUTPUT, var_name);
 
 	$$ = std::move(var);
 }
