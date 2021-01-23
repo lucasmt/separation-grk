@@ -31,8 +31,8 @@ MemorylessStrategy CycleCover::ComputeReachabilityStrategy(
 	// This strategy might be called when the game is already in a goal state,
 	// so need to be sure the move from the goal state can come back to the goal
 	//
-	// Moves_0(s, s') = States_0(s) & Bipath(s, s')
-	CUDD::BDD moves = states & bipath_relation;
+	// Moves_0(s, s') = States_0(s) & T(s, s') & Bipath(s, s')
+	CUDD::BDD moves = states & transition_relation & bipath_relation;
 
 	while (true) {
 		// Moves_i(s, s') = Moves_{i-1}(s, s') | (!States_{i-1}(s) & T(s, s') &
