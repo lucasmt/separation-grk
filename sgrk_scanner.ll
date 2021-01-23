@@ -28,6 +28,7 @@ blank [ \t]
 
 "("                 { return yy::parser::make_LEFT(loc); }
 ")"                 { return yy::parser::make_RIGHT(loc); }
+";"                 { return yy::parser::make_SEP(loc); }
 \"in:{id}\"         { return yy::parser::make_INPROP(yytext, loc); }
 \"out:{id}\"        { return yy::parser::make_OUTPROP(yytext, loc); }
 0                   { return yy::parser::make_FALSE(loc); }

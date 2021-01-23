@@ -87,4 +87,4 @@ else:
                for i in range(n_rooms)]
     impls = impls_1 + impls_2
     
-    print(format_sgrk(in_init, in_trans, out_init, out_trans, impls))
+    print(format_sgrk(in_init, out_init, in_trans, out_trans, impls))

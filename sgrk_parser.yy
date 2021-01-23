@@ -32,6 +32,7 @@ class Driver;
 %token
 	LEFT			"("
 	RIGHT			")"
+	SEP				";"
 	FALSE			"0"
 	TRUE			"1"
 	NOT				"!"
@@ -50,30 +51,28 @@ class Driver;
 %token END 0 "end of file"
 
 %nterm <std::optional<SGrk::Var>> prop
-%nterm <CUDD::BDD> state
-%nterm <CUDD::BDD> in_state
-%nterm <CUDD::BDD> out_state
-%nterm <CUDD::BDD> and_states
-%nterm <CUDD::BDD> or_states
-%nterm <CUDD::BDD> trans
-%nterm <CUDD::BDD> in_trans
-%nterm <CUDD::BDD> out_trans
+%nterm <CUDD::BDD> formula
+%nterm <CUDD::BDD> formulas
+%nterm <CUDD::BDD> in_formulas
+%nterm <CUDD::BDD> out_formulas
+%nterm <CUDD::BDD> and_formulas
+%nterm <CUDD::BDD> or_formulas
 %nterm <std::vector<SGrk::SeparationGrkImplication>> justice_implications
 %nterm <SGrk::SeparationGrkImplication> justice_implication
 %nterm <std::vector<CUDD::BDD>> justices
 %nterm <std::vector<CUDD::BDD>> in_justices
 %nterm <std::vector<CUDD::BDD>> out_justices
 %nterm <CUDD::BDD> justice
-%nterm <SGrk::SeparationGrkSpec> sgrk_formula
+%nterm <SGrk::SeparationGrkSpec> sgrk_spec
 
 %printer { yyoutput << "PLACEHOLDER"; } <*>;
 
 %%
 
-%start sgrk_formula;
-sgrk_formula: LEFT in_state AND in_trans RIGHT IFTHEN LEFT out_state AND out_trans AND justice_implications RIGHT
+%start sgrk_spec;
+sgrk_spec: in_formulas SEP out_formulas SEP in_formulas SEP out_formulas SEP justice_implications
 {
-	driver.spec = SGrk::SeparationGrkSpec($2, $8, $4, $10, std::move($12));
+	driver.spec = SGrk::SeparationGrkSpec($1, $3, $5, $7, std::move($9));
 };
 
 prop: INPROP
@@ -101,33 +100,30 @@ prop: INPROP
 	$$ = std::move(var);
 }
 
-in_state: state { $$ = $1; };
+in_formulas: formulas { $$ = $1; };
 
-out_state: state { $$ = $1; };
+out_formulas: formulas { $$ = $1; };
 
-state: FALSE { $$ = driver.mgr->bddZero(); }
+formulas: formula { $$ = $1; }
+| formula AND formulas { $$ = $1 & $3; };
+
+formula: FALSE { $$ = driver.mgr->bddZero(); }
 | TRUE { $$ = driver.mgr->bddOne(); }
 | prop { $$ = $1->operator()(); }
 | NEXT prop {	$$ = $2->Prime(); }
-| LEFT state RIGHT { $$ = $2; }
-| NOT state {	$$ = !$2; }
-| LEFT state and_states RIGHT {	$$ = $2 & $3; }
-| LEFT state or_states RIGHT { $$ = $2 | $3; }
-| LEFT state IFTHEN state RIGHT {	$$ = !$2 | $4; }
-| LEFT state IFF state RIGHT { $$ = $2.Xnor($4); }
-| LEFT state XOR state RIGHT { $$ = $2.Xnor(!$4); };
+| LEFT formula RIGHT { $$ = $2; }
+| NOT formula {	$$ = !$2; }
+| LEFT formula and_formulas RIGHT {	$$ = $2 & $3; }
+| LEFT formula or_formulas RIGHT { $$ = $2 | $3; }
+| LEFT formula IFTHEN formula RIGHT {	$$ = !$2 | $4; }
+| LEFT formula IFF formula RIGHT { $$ = $2.Xnor($4); }
+| LEFT formula XOR formula RIGHT { $$ = $2.Xnor(!$4); };
 
-and_states: AND state { $$ = $2; }
-| AND state and_states { $$ = $2 & $3; };
+and_formulas: AND formula { $$ = $2; }
+| AND formula and_formulas { $$ = $2 & $3; };
 
-or_states: OR state { $$ = $2; }
-| OR state or_states {$$ = $2 | $3; };
-
-in_trans: trans { $$ = $1; };
-
-out_trans: trans { $$ = $1; };
-
-trans: ALWAYS state { $$ = $2; };
+or_formulas: OR formula { $$ = $2; }
+| OR formula or_formulas {$$ = $2 | $3; };
 
 justice_implications: justice_implication
 {
@@ -159,7 +155,7 @@ justices: justice { $$ = std::vector<CUDD::BDD>({ $1 }); }
 	$$ = std::move(justices);
 };
 
-justice: INFINITE state { $$ = $2; };
+justice: INFINITE formula { $$ = $2; };
 
 %%
 
