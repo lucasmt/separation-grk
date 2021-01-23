@@ -42,3 +42,6 @@ def Event(f):
 
 def Until(f1, f2):
     return "(" + f1 + " U " + f2 + ")"
+
+def WeakUntil(f1, f2):
+    return "(" + f1 + " W " + f2 + ")"
