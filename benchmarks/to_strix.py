@@ -21,8 +21,14 @@ else:
             out_trans = parenthesize(components[3])
             grk = parenthesize(components[4])
 
-            print IfThen(in_init,
-                         BigAnd([out_init,
-                                 WeakUntil(out_trans, Not(in_trans)),
-                                 IfThen(Always(in_trans), grk)]))
+            formula1 = IfThen(in_init,
+                              BigAnd([out_init,
+                                      WeakUntil(out_trans, Not(in_trans)),
+                                      IfThen(Always(in_trans), grk)]))
+
+            formula2 = BigOr([Not(in_init),
+                              And(out_init, Until(out_trans, Not(in_trans))),
+                              BigAnd([out_init, Always(out_trans), grk])])
+
+            print(formula2)
 
