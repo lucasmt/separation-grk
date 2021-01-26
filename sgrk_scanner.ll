@@ -41,7 +41,7 @@ blank [ \t]
 "^"                 { return yy::parser::make_XOR(loc); }
 X                   { return yy::parser::make_NEXT(loc); }
 G                   { return yy::parser::make_ALWAYS(loc); }
-GF                  { return yy::parser::make_INFINITE(loc); }
+F                   { return yy::parser::make_EVENTUAL(loc); }
 <<EOF>>             { return yy::parser::make_END(loc); }
 
 %%

@@ -43,7 +43,7 @@ class Driver;
 	XOR				"^"
 	NEXT			"X"
 	ALWAYS		"G"
-	INFINITE	"GF"
+	EVENTUAL	"F"
 ;
 
 %token <std::string> INPROP "input proposition"
@@ -155,7 +155,7 @@ justices: justice { $$ = std::vector<CUDD::BDD>({ $1 }); }
 	$$ = std::move(justices);
 };
 
-justice: INFINITE formula { $$ = $2; };
+justice: ALWAYS EVENTUAL formula { $$ = $3; };
 
 %%
 
