@@ -1,0 +1,56 @@
+(!"in:light1" -> ("in:freq1_0" & !"in:freq1_1" & !"in:freq1_2")) &
+("in:light1" -> (!"in:freq1_0" & !"in:freq1_1" & !"in:freq1_2")) &
+(!"in:light2" -> ("in:freq2_0" & !"in:freq2_1" & !"in:freq2_2")) &
+("in:light2" -> (!"in:freq2_0" & !"in:freq2_1" & !"in:freq2_2")) 
+
+;
+
+(!"out:light1" -> ("out:freq1_0" & !"out:freq1_1" & !"out:freq1_2")) &
+("out:light1" -> (!"out:freq1_0" & !"out:freq1_1" & !"out:freq1_2")) &
+(!"out:light2" -> ("out:freq2_0" & !"out:freq2_1" & !"out:freq2_2")) &
+("out:light2" -> (!"out:freq2_0" & !"out:freq2_1" & !"out:freq2_2")) 
+
+;
+
+(!"in:light1" | !"in:light2") & 
+
+( (!"in:freq1_0" & !"in:freq1_1" & "in:freq1_2") -> (!(X "in:freq1_0") & !(X "in:freq1_1") & (X "in:freq1_2")) ) &
+( (!(!"in:freq1_0" & !"in:freq1_1" & "in:freq1_2") & X "in:light1") -> (!(X "in:freq1_0") & !(X "in:freq1_1") & !(X "in:freq1_2")) ) &
+( ((!"in:freq1_0" & !"in:freq1_1" & !"in:freq1_2") & !(X "in:light1")) -> ((X "in:freq1_0") & !(X "in:freq1_1") & !(X "in:freq1_2")) ) &
+( (("in:freq1_0" & !"in:freq1_1" & !"in:freq1_2") & !(X "in:light1")) -> (!(X "in:freq1_0") & (X "in:freq1_1") & !(X "in:freq1_2")) ) &
+( ((!"in:freq1_0" & "in:freq1_1" & !"in:freq1_2") & !(X "in:light1")) -> ((X "in:freq1_0") & (X "in:freq1_1") & !(X "in:freq1_2")) ) &
+( (("in:freq1_0" & "in:freq1_1" & !"in:freq1_2") & !(X "in:light1")) -> (!(X "in:freq1_0") & !(X "in:freq1_1") & (X "in:freq1_2")) ) &
+
+( (!"in:freq2_0" & !"in:freq2_1" & "in:freq2_2") -> (!(X "in:freq2_0") & !(X "in:freq2_1") & (X "in:freq2_2")) ) &
+( (!(!"in:freq2_0" & !"in:freq2_1" & "in:freq2_2") & X "in:light2") -> (!(X "in:freq2_0") & !(X "in:freq2_1") & !(X "in:freq2_2")) ) &
+( ((!"in:freq2_0" & !"in:freq2_1" & !"in:freq2_2") & !(X "in:light2")) -> ((X "in:freq2_0") & !(X "in:freq2_1") & !(X "in:freq2_2")) ) &
+( (("in:freq2_0" & !"in:freq2_1" & !"in:freq2_2") & !(X "in:light2")) -> (!(X "in:freq2_0") & (X "in:freq2_1") & !(X "in:freq2_2")) ) &
+( ((!"in:freq2_0" & "in:freq2_1" & !"in:freq2_2") & !(X "in:light2")) -> ((X "in:freq2_0") & (X "in:freq2_1") & !(X "in:freq2_2")) ) &
+( (("in:freq2_0" & "in:freq2_1" & !"in:freq2_2") & !(X "in:light2")) -> (!(X "in:freq2_0") & !(X "in:freq2_1") & (X "in:freq2_2")) ) 
+
+;
+
+(!"out:light1" | !"out:light2") & 
+(( !"out:light2" ) -> "out:light1") & 
+(( !"out:light1" ) -> "out:light2") & 
+
+( (!"out:freq1_0" & !"out:freq1_1" & "out:freq1_2") -> (!(X "out:freq1_0") & !(X "out:freq1_1") & (X "out:freq1_2")) ) &
+( (!(!"out:freq1_0" & !"out:freq1_1" & "out:freq1_2") & X "out:light1") -> (!(X "out:freq1_0") & !(X "out:freq1_1") & !(X "out:freq1_2")) ) &
+( ((!"out:freq1_0" & !"out:freq1_1" & !"out:freq1_2") & !(X "out:light1")) -> ((X "out:freq1_0") & !(X "out:freq1_1") & !(X "out:freq1_2")) ) &
+( (("out:freq1_0" & !"out:freq1_1" & !"out:freq1_2") & !(X "out:light1")) -> (!(X "out:freq1_0") & (X "out:freq1_1") & !(X "out:freq1_2")) ) &
+( ((!"out:freq1_0" & "out:freq1_1" & !"out:freq1_2") & !(X "out:light1")) -> ((X "out:freq1_0") & (X "out:freq1_1") & !(X "out:freq1_2")) ) &
+( (("out:freq1_0" & "out:freq1_1" & !"out:freq1_2") & !(X "out:light1")) -> (!(X "out:freq1_0") & !(X "out:freq1_1") & (X "out:freq1_2")) ) &
+
+( (!"out:freq2_0" & !"out:freq2_1" & "out:freq2_2") -> (!(X "out:freq2_0") & !(X "out:freq2_1") & (X "out:freq2_2")) ) &
+( (!(!"out:freq2_0" & !"out:freq2_1" & "out:freq2_2") & X "out:light2") -> (!(X "out:freq2_0") & !(X "out:freq2_1") & !(X "out:freq2_2")) ) &
+( ((!"out:freq2_0" & !"out:freq2_1" & !"out:freq2_2") & !(X "out:light2")) -> ((X "out:freq2_0") & !(X "out:freq2_1") & !(X "out:freq2_2")) ) &
+( (("out:freq2_0" & !"out:freq2_1" & !"out:freq2_2") & !(X "out:light2")) -> (!(X "out:freq2_0") & (X "out:freq2_1") & !(X "out:freq2_2")) ) &
+( ((!"out:freq2_0" & "out:freq2_1" & !"out:freq2_2") & !(X "out:light2")) -> ((X "out:freq2_0") & (X "out:freq2_1") & !(X "out:freq2_2")) ) &
+( (("out:freq2_0" & "out:freq2_1" & !"out:freq2_2") & !(X "out:light2")) -> (!(X "out:freq2_0") & !(X "out:freq2_1") & (X "out:freq2_2")) ) 
+
+;
+
+((GF("in:light1")) ->  (GF("out:light1"))) &
+((GF("in:light2")) ->  (GF("out:light2"))) &
+((GF(!(!"in:freq1_0" & !"in:freq1_1" & "in:freq1_2"))) ->  (GF(!(!"out:freq1_0" & !"out:freq1_1" & "out:freq1_2")))) &
+((GF(!(!"in:freq2_0" & !"in:freq2_1" & "in:freq2_2"))) ->  (GF(!(!"out:freq2_0" & !"out:freq2_1" & "out:freq2_2")))) 
