@@ -1,0 +1,14 @@
+(!"in:t0" & !"in:t1") ;
+(!"out:a0" & !"out:a1") ;
+((!"in:t0" & !"in:t1") -> ((!X"in:t0" & !X"in:t1") | (!X"in:t0" & X"in:t1") | (X"in:t0" & !X"in:t1") | (X"in:t0" & X"in:t1"))) &
+((!"in:t0" & "in:t1") -> (!X"in:t0" & X"in:t1")) &
+(("in:t0" & !"in:t1") -> (X"in:t0" & !X"in:t1")) &
+(("in:t0" & "in:t1") -> (X"in:t0" & X"in:t1")) ;
+(((!"out:a0" & !"out:a1")) -> ((!X"out:a0" & X"out:a1") | (X"out:a0" & X"out:a1"))) &
+(("out:a0" & !"out:a1") -> (X"out:a0" & X"out:a1")) &
+(("out:a0" & "out:a1") -> (X"out:a0" & !X"out:a1")) &
+((!"out:a0" & "out:a1") -> (!X"out:a0" & !X"out:a1")) ;
+((G F (!"in:t0" & !"in:t1")) -> (G F (!"out:a0" & !"out:a1"))) &
+((G F (!"in:t0" & "in:t1")) -> (G F (!"out:a0" & "out:a1"))) &
+((G F ("in:t0" & !"in:t1")) -> (G F ("out:a0" & !"out:a1"))) &
+((G F ("in:t0" & "in:t1")) -> (G F ("out:a0" & "out:a1")))
