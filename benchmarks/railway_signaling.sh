@@ -1,10 +1,11 @@
-rm railway_signaling*.sgrk
-javac -d . CreateSpec.java
+javac -d . RailwaySignaling.java
 
-for n in {2..10}
+for m in {2..3}
 do
-		for k in $(seq 2 ${n})
-		do
-				java benchmark.CreateSpec ${n} ${k}
-		done
+    rm railway_signaling_${m}/railway_signaling_${m}_*.sgrk
+
+    for n in {2..10}
+    do
+	java benchmark.RailwaySignaling ${m} ${n}
+    done
 done

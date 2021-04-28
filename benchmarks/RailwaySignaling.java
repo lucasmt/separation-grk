@@ -11,7 +11,7 @@ import java.util.Collections;
 
 //import com.sun.org.apache.xml.internal.serialize.LineSeparator;
 
-public class CreateSpec {
+public class RailwaySignaling {
 
 	public static void main(String[] args) throws Exception {
 
@@ -22,9 +22,10 @@ public class CreateSpec {
 
 		// extract the parameters and define the spec name
 
-		int railways = Integer.parseInt(args[0]);
-		int delay = Integer.parseInt(args[1]);
-		String filename = "railway_signaling_" + railways + "_" + delay + ".sgrk";
+		int delay = Integer.parseInt(args[0]);
+		int railways = Integer.parseInt(args[1]);
+		String family = "railway_signaling_" + delay;
+		String filename = family + "/" + family + "_" + railways + ".sgrk";
 
 		// calculate #bits to encode the delay in binary
 		int varnum = 0;
