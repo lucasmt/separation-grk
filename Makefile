@@ -36,4 +36,4 @@ Driver.o: sgrk_parser.hpp
 .PHONY: clean
 
 clean:
-	rm -f $(ODIR)/*.o *~ core $(INCDIR)/*~
+	rm -f $(ODIR)/*.o *~ core $(INCDIR)/*~ sgrk
