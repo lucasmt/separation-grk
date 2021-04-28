@@ -8,38 +8,42 @@ The project also requires a working installation of ``flex`` and ``bison``, and 
 
 ## Specification format
 
-Examples of specification files can be found in the ``benchmarks`` subdirectory. The following example can be found in ``cleaning_robots_2.sgrk``:
+Examples of specification files can be found in the ``benchmarks`` subdirectory. The following example can be found in ``cleaning_robots/cleaning_robots_1.sgrk``:
 
 ```
-(("in:room0" & !"in:clean0" & !"in:done") &
- G (("in:room0") &
-   (X "in:room0") &
-   ("in:room0" -> X "in:room0") &
-   ((!"in:clean0" & X "in:clean0") -> ("in:room0" & X "in:room0")) &
-   ("in:clean0" -> X "in:clean0") &
-   ("in:done" -> X "in:done") &
-   (X "in:done" -> (X "in:room0" <-> "in:room0")) &
-   (X "in:done" -> (X "in:clean0" <-> "in:clean0")))) ->
-(("out:room0" & !"out:clean0") &
- G (("out:room0") &
-    (X "out:room0") &
-    ("out:room0" -> X "out:room0") &
-    ((!"out:clean0" & X "out:clean0") -> ("out:room0" & X "out:room0")) &
-    ("out:clean0" -> X "out:clean0")) &
- ((GF "in:done" & GF !"in:clean0") -> (GF "out:clean0")) &
- ((GF "in:done" & GF "in:clean0") -> (GF !"out:clean0")))
+"in:room0" & !"in:clean0" & !"in:done" ;
+
+"out:room0" & !"out:clean0" ;
+
+("in:room0") &
+(X "in:room0") &
+("in:room0" -> X "in:room0") &
+((!"in:clean0" & X "in:clean0") -> ("in:room0" & X "in:room0")) &
+("in:clean0" -> X "in:clean0") &
+("in:done" -> X "in:done") &
+(X "in:done" -> (X "in:room0" <-> "in:room0")) &
+(X "in:done" -> (X "in:clean0" <-> "in:clean0")) ;
+
+("out:room0") &
+(X "out:room0") &
+("out:room0" -> X "out:room0") &
+((!"out:clean0" & X "out:clean0") -> ("out:room0" & X "out:room0")) &
+("out:clean0" -> X "out:clean0") ;
+
+((GF "in:done" & GF !"in:clean0") -> (GF "out:clean0")) &
+((GF "in:done" & GF "in:clean0") -> (GF !"out:clean0"))
 ```
 
 Specification files must be in the format
 
 ```
-(<initial-assumptions> &
- G <safety-assumptions>) ->
-(<initial-guarantees> &
- G <safety-guarantees> &
- ((GF <justice-assumption> & ... & GF <justice-assumption>) -> (GF <justice-guarantee> & ... & GF <justice-guarantee>)) &
+<initial-assumptions>;
+<initial-guarantees>;
+<safety-assumptions>;
+<safety-guarantees>;
+((GF <justice-assumption> & ... & GF <justice-assumption>) -> (GF <justice-guarantee> & ... & GF <justice-guarantee>)) &
 ... &
- ((GF <justice-assumption> & ... & GF <justice-assumption>) -> (GF <justice-guarantee> & ... & GF <justice-guarantee>)))
+((GF <justice-assumption> & ... & GF <justice-assumption>) -> (GF <justice-guarantee> & ... & GF <justice-guarantee>)))
 ```
 
 where assumptions are boolean formulas over the input variables and guarantees are boolean formulas over the output variables. All variables must be in quotation marks. Input variables must be prefixed by ``in:`` and output variables by ``out:``, and their names can use any alphanumeric character or underscores, in any order. Although the tool currently does not check whether the assumptions only contain input variables and the guarantees only contain output variables, if this condition is violated the tool is not guaranteed to produce correct results.
@@ -47,6 +51,18 @@ where assumptions are boolean formulas over the input variables and guarantees a
 Boolean formulas use the operators ``!`` (not), ``&`` (and), ``|`` (or), ``->`` (implies), ``<->`` (iff) and ``^`` (xor), and the constants ``0`` and ``1``. In the safety assumptions and guarantees variables can also be preceded by the temporal operator ``X`` (next).
 
 Whitespace and newlines are used for readability, but ignored by the parser.
+
+The implicit semantics of a specification in the format above are given by the LTL formula
+
+```
+<initial-assumptions> ->
+    (<initial-guarantees> &
+     (<safety-guarantees> W !<safety-assumptions>) &
+     (G <safety-assumptions> ->
+         (((GF <justice-assumption> & ... & GF <justice-assumption>) -> (GF <justice-guarantee> & ... & GF <justice-guarantee>)) &
+          ... &
+          ((GF <justice-assumption> & ... & GF <justice-assumption>) -> (GF <justice-guarantee> & ... & GF <justice-guarantee>)))))
+```
 
 ## Running the tool
 
