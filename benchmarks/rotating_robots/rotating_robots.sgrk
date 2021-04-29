@@ -1,0 +1,22 @@
+!"in:pos0" & !"in:pos1" & !"in:dir0" & !"in:dir1" ;
+
+!"out:pos0" & !"out:pos1" & !"out:dir0" & !"out:dir1" ;
+
+("in:rot" ^ "in:mov") & (X "in:rot" ^ X "in:mov") &
+(("in:mov" & "in:dir0") <-> (("in:pos1" ^ "in:dir1") & ("in:pos1" ^ X "in:pos1"))) &
+(("in:mov" & !"in:dir0") <-> (("in:pos0" ^ "in:dir1") & ("in:pos0" ^ X "in:pos0"))) &
+(!"in:mov" -> (("in:pos0" <-> X "in:pos0") & ("in:pos1" <-> X "in:pos1"))) &
+("in:rot" -> ("in:dir0" ^ X "in:dir0")) &
+(!"in:rot" -> (("in:dir0" <-> X "in:dir0") & ("in:dir1" <-> X "in:dir1"))) ;
+
+("out:rot" ^ "out:mov") & (X "out:rot" ^ X "out:mov") &
+(("out:mov" & "out:dir0") <-> (("out:pos1" ^ "out:dir1") & ("out:pos1" ^ X "out:pos1"))) &
+(("out:mov" & !"out:dir0") <-> (("out:pos0" ^ "out:dir1") & ("out:pos0" ^ X "out:pos0"))) &
+(!"out:mov" -> (("out:pos0" <-> X "out:pos0") & ("out:pos1" <-> X "out:pos1"))) &
+("out:rot" -> (("out:dir0" ^ X "out:dir0") & (X "out:dir1" <-> ("out:dir0" ^ "out:dir1")))) &
+(!"out:rot" -> (("out:dir0" <-> X "out:dir0") & ("out:dir1" <-> X "out:dir1"))) ;
+
+((GF (!"in:pos0" & !"in:pos1")) -> (GF (!"out:pos0" & !"out:pos1"))) &
+((GF (!"in:pos0" & "in:pos1")) -> (GF (!"out:pos0" & "out:pos1"))) &
+((GF ("in:pos0" & !"in:pos1")) -> (GF ("out:pos0" & !"out:pos1"))) &
+((GF ("in:pos0" & "in:pos1")) -> (GF ("out:pos0" & "out:pos1")))
