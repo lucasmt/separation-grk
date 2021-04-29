@@ -2,38 +2,48 @@ CUDD=../cudd-install
 
 IDIR=$(CUDD)/include
 LDIR=$(CUDD)/lib
-ODIR=.
 
 BISON=bison
 FLEX=flex
 CC=g++
-CFLAGS=-I$(IDIR) -L$(LDIR) --std=c++17
 
-LIBS=-lcudd
+SRC_DIR := src
+OBJ_DIR := obj
+BIN_DIR := bin
 
-_DEPS=
-DEPS=$(patsubst %,$(IDIR)/%,$(_DEPS))
+EXE := $(BIN_DIR)/sgrk
+SRC := $(wildcard $(SRC_DIR)/*.cpp)
+OBJ := $(patsubst $(SRC_DIR)/%.cpp, $(OBJ_DIR)/%.o, $(SRC)) $(OBJ_DIR)/sgrk_parser.o $(OBJ_DIR)/sgrk_scanner.o
 
-_OBJ=sgrk_parser.o sgrk_scanner.o CycleCover.o CycleStrategy.o Driver.o Main.o MemorylessStrategy.o PermissiveStrategy.o SeparationGrkPlayer.o SeparationGrkSolver.o SeparationGrkStrategy.o SpaceConnectivity.o TestSet.o Util.o VarMgr.o WeakFGGame.o WeakFGGameSolver.o
-OBJ=$(patsubst %,$(ODIR)/%,$(_OBJ))
+CPPFLAGS := -I$(IDIR) -MMD -MP
+CFLAGS := -Wall --std=c++17
+LDFLAGS := -L$(LDIR)
+LDLIBS := -lcudd
 
-%.cpp %.hpp: %.yy
-	$(BISON) $(BISONFLAGS) -o $*.cpp $<
+.PHONY: all clean
 
-%.cpp: %.ll
+all: $(EXE)
+
+$(EXE): $(OBJ) | $(BIN_DIR)
+	$(CC) $(LDFLAGS) $^ $(LDLIBS) -o $@
+
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp | $(OBJ_DIR)
+	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
+
+$(BIN_DIR) $(OBJ_DIR):
+	mkdir -p $@
+
+$(SRC_DIR)/%.cpp $(SRC_DIR)/%.hpp: $(SRC_DIR)/%.yy
+	$(BISON) $(BISONFLAGS) -o $(SRC_DIR)/$*.cpp $<
+
+$(SRC_DIR)/%.cpp: $(SRC_DIR)/%.ll
 	$(FLEX) $(FLEXFLAGS) -o $@ $<
 
-$(ODIR)/%.o: %.cpp $(DEPS)
-	$(CC) -c -o $@ $< $(CFLAGS)
-
-sgrk: $(OBJ)
-	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
-
-sgrk_parser.o: sgrk_parser.hpp
-sgrk_scanner.o: sgrk_parser.hpp
-Driver.o: sgrk_parser.hpp
-
-.PHONY: clean
+$(OBJ_DIR)/sgrk_parser.o: $(SRC_DIR)/sgrk_parser.hpp
+$(OBJ_DIR)/sgrk_scanner.o: $(SRC_DIR)/sgrk_parser.hpp
+$(OBJ_DIR)/Driver.o: $(SRC_DIR)/sgrk_parser.hpp
 
 clean:
-	rm -f $(ODIR)/*.o *~ core $(INCDIR)/*~ sgrk
+	@$(RM) -rv $(EXE) $(OBJ_DIR)/*.o $(OBJ_DIR)/*.d
+
+-include $(OBJ:.o=.d)
