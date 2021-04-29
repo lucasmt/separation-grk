@@ -1,10 +1,14 @@
-# Separation GR(k)
+# SGR(k): Separated GR(k) Synthesis
+
+This is a tool for reactive synthesis from temporal specifications in the *Separated GR(k)* format, a fragment of Generalized Reactivity(k) where every component of the specification either depends only on the input variables or only on the output variables. This property allows the synthesis problem to be solved in linear time on the number of states of the game graph.
 
 ## Installation
 
-This project requires the 3.0.0 version of the CUDD BDD package. It additionally assumes that the CUDD C++ API is wrapped in a namespace called ``CUDD``. A version of the code with the namespace can be found here: https://github.com/KavrakiLab/cudd.git. Once CUDD has been compiled, replace the ``CUDD=../cudd-install`` line in the ``Makefile`` with the path to the installation directory, which should have an ``include`` folder with the file ``cuddObj.hh`` file and a ``lib`` folder with the file ``libcudd.a``.
+This project requires the 3.0.0 version of the CUDD BDD package. It additionally assumes that the CUDD C++ API is wrapped in a namespace called ``CUDD``. A version of the code with the namespace can be found here: https://github.com/KavrakiLab/cudd.git. Make sure to run the ``configure`` script on CUDD with the ``--enable-obj`` option in order to compile the C++ API. The ``--prefix`` option can also be used to specify the installation directory.
 
-The project also requires a working installation of ``flex`` and ``bison``, and a version of ``g++`` with support for C++17. To compile, simply run ``make`` from the top-level directory.
+Once CUDD has been compiled, replace the ``CUDD=../cudd-install`` line in the ``Makefile`` with the path to the installation directory of CUDD, which should have an ``include`` folder with the file ``cuddObj.hh`` file and a ``lib`` folder with the file ``libcudd.a``.
+
+The project also requires a working installation of ``flex`` and ``bison``, and a version of ``g++`` with support for C++17. To compile, simply run ``make`` from the top-level directory. A new ``bin`` folder will be created containing the executable.
 
 ## Specification format
 
@@ -52,7 +56,7 @@ Boolean formulas use the operators ``!`` (not), ``&`` (and), ``|`` (or), ``->`` 
 
 Whitespace and newlines are used for readability, but ignored by the parser.
 
-The implicit semantics of a specification in the format above are given by the LTL formula
+The implicit semantics of a specification in the format above are given by the following Linear Temporal Logic formula:
 
 ```
 <initial-assumptions> ->
@@ -64,6 +68,8 @@ The implicit semantics of a specification in the format above are given by the L
           ((GF <justice-assumption> & ... & GF <justice-assumption>) -> (GF <justice-guarantee> & ... & GF <justice-guarantee>)))))
 ```
 
+In this formula, ``W`` denotes the "weak until" operator, ``G`` the "globally" operator and ``F`` the "eventually" operator.
+
 ## Running the tool
 
 To run the tool, use the command
@@ -72,15 +78,17 @@ To run the tool, use the command
 ./sgrk <specification-file> [--test=<test-set-file>] [--play=<input-play-file>] [--dumpdot=<output-dot-file>]
 ```
 
-where ``<specification-file>`` is a file in the format above. The tool outputs either ``Realizable`` or ``Unrealizable``. If the specification is realizable, the optional arguments indicate what to do with the winning strategy. We describe the options below.
+where ``<specification-file>`` is a file in tnhe format above. The tool outputs either ``Realizable`` or ``Unrealizable``.
+
+Although the tool computes a winning strategy if the specification is realizable, currently there is no option to save this winning strategy in a standard format such as AIGER. However, the winning strategy can be inspected in various ways by using the optional arguments. We descripte these options below.
 
 ### Dump dot
 
 If the optional argument ``--dumpdot=<output-dot-file>`` is provided, then it will save a ``.dot`` file with three BDDs:
 
-* The first (labeled ``FG(CC)``) represents the set of winning states; that is, the states from where the system can force the game to remain forever in a strongly-connected component that covers cycles.
-* The second (labeled ``CC``) represents the set of states where the system is able to cover cycles: as long as the environment does not move to a different strongly-connected component, the system has a strategy for guaranteeing that all implications are satisfied without leaving the current strongly-connected component.
-* The third (labeled ``T``) represents a transition relation that will take the system from a winning state that does not cover cycles to a winning state that does cover cycles.
+* The first (labeled ``FG(CC)``) represents the set of winning states; that is, the states from where the system can force the game to remain forever in a strongly-connected component of the game graph that satisfies the GR(k) winning condition.
+* The second (labeled ``CC``) represents the set of states where the system can win while remaining in the same strongly-connected component. That is, as long as the environment does not move to a different component, the system has a strategy to satisfy the GR(k) winning condition from within the current component.
+* The third (labeled ``T``) represents a transition relation that will take the system from a winning state not in ``CC`` to a winning state in ``CC``.
 
 ### Test
 
