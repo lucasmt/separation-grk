@@ -75,7 +75,7 @@ In this formula, ``W`` denotes the "weak until" operator, ``G`` the "globally" o
 To run the tool, use the command
 
 ```
-./sgrk <specification-file> [--test=<test-set-file>] [--play=<input-play-file>] [--dumpdot=<output-dot-file>]
+bin/sgrk <specification-file> [--test=<test-set-file>] [--play=<input-play-file>] [--dumpdot=<output-dot-file>]
 ```
 
 where ``<specification-file>`` is a file in tnhe format above. The tool outputs either ``Realizable`` or ``Unrealizable``.
