@@ -136,3 +136,7 @@ Each line corresponds to one test case, and displays ``PASS`` or ``FAIL`` for ea
 If the optional argument ``--play=<input-play-file>`` is provided, the tool can play the game with the user, using the winning strategy to choose outputs based on the inputs received.
 
 If ``<input-play-file>`` is given as ``stdin``, the tool requests inputs via the terminal. Inputs are given as bitvectors with one bit per input variable, in the order requested by the tool. Based on these inputs, the tool chooses the output and updates the state. The interaction can be ended by typing ``quit``. If a file name is passed as ``<input-play-file>``, the file should contain one input bitvector per line and end with ``quit``. The tool will then run the game automatically using the inputs from the file.
+
+## Source code
+
+All source files can be found in the ``src`` folder. The main algorithm can be found in the class ``SeparationGrkSolver``, which reduces the synthesis problem to a game over a weak automaton. The game is solved by the class ``WeakFGSolver``, and the winning strategy for the game is given along with additional information to the class ``SeparationGrkStrategy``, which constructs a strategy for realizing the Separated GR(k) specification.
